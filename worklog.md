@@ -547,3 +547,23 @@ Work Log:
 Stage Summary:
 - Dictado por voz publicado en https://zoes.social para todos los modos (chat, imagenes, videos, agente, investigacion).
 - Pendiente de prueba real por el usuario con microfono fisico (Chrome/Edge recomendado).
+
+---
+Task ID: 25
+Agent: main (Z.ai)
+Task: Verificar buscador por escrito y audio + arreglos de produccion (zoes.social)
+
+Work Log:
+- Prueba TTS->ASR ida y vuelta: scripts/verify-asr-e2e.mjs genera voz real (zai.audio.tts.create, voz tongtong, response_format wav) y la envia a /api/asr -> transcripcion correcta en WAV y WebM/Opus (el formato que graban Chrome/Edge).
+- E2E navegador local: mensaje escrito -> streaming OK ("Actualmente solo puedo operar por escrito..."); boton "Dictar por voz" renderiza; sin permisos muestra toast "Microfono bloqueado" (manejo correcto); consola sin errores.
+- DETECTADO: en produccion todo endpoint con DB devolvia 500. Causa: db/custom.db esta gitignore -> GitHub Actions no lo tiene -> el build remoto de Vercel no incluye la base (el glob "/api/**" de outputFileTracingIncludes tampoco viaja al empaquetado de Vercel).
+- FIX 1 (DB): vercel.json buildCommand crea la DB en build (mkdir -p db + prisma db push) y src/lib/db.ts exporta ensureDb(): bootstrap DDL idempotente (CREATE TABLE IF NOT EXISTS Conversation/Message + indice) con promesa cacheada. ensureDb() anadido a las 12 handlers de chat, conversations, conversations/[id], videos, videos/long. Resultado: /api/conversations 200 en produccion.
+- FIX 2 (SDK): en produccion ZAI.create() fallaba por ausencia de .z-ai-config (gitignored, no viaja en el bundle). Diagnostico con rutas debug: el SDK solo lee config de disco; se anadio scripts/patch-zai-sdk.js (build, idempotente) que incluye '/tmp/.z-ai-config' en configPaths, src/lib/zai.ts materializa la config desde la env cifrada ZAI_CONFIG_B64 (creada via API Vercel, production+preview) y todas las rutas usan createZai(). Resultado: config carga OK en produccion.
+- LIMITE DE INFRAESTRUCTURA (no solucionable en codigo): internal-api.z.ai resuelve publicamente a IPs PRIVADAS 172.25.136.213/172.25.150.234 (A records del LB Aliyun). Es API interna de la red Z.ai: desde AWS/Vercel da UND_ERR_CONNECT_TIMEOUT. Verificado con dns.google y con la causa del fetch en lambda. Por eso la generacion IA (chat/imagenes/videos/ASR/TTS/web_search) solo opera desde el sandbox Z.ai (dev); en produccion la UI+DB+persistencia+endpoint de voz funcionan y las llamadas IA devuelven error amigable.
+- Camino para IA en produccion: cuenta de Z.ai publica (api.z.ai tiene IPs publicas) -> API key -> actualizar ZAI_CONFIG_B64 con baseUrl https://api.z.ai/v1; el SDK ya es OpenAI-compatible en rutas.
+- Limpieza: eliminadas rutas temporales /api/debug-db y /api/debug-zai.
+- Commits: 73600dc (db push build), d70b08b+999e512 (debug), eb7b696 (ensureDb), ccb5bdd (ZAI_CONFIG_B64+patch), 6676391 (limpieza). Deploy final 6676391 READY.
+
+Stage Summary:
+- Verificacion completa del buscador: por escrito operativo E2E (local) y con DB/persistencia operativa en produccion; dictado por voz con boton, grabacion, endpoint y transcripcion real verificados (WAV+WebM).
+- Produccion zoes.social: app 200, DB 200, asr 400 (validacion), UI con micrófono renderizada. Bloqueo IA documentado (API interna Z.ai) con plan claro para resolverlo (API publica + key).
