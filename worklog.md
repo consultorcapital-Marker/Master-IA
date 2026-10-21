@@ -516,3 +516,17 @@ Work Log:
 Stage Summary:
 - Marca "Zoe Master IA" publicada y operativa en https://zoes.social (SSL activo).
 - Nuevo alias de proyecto: zoe-master-ia.vercel.app. Auto-deploy validado por tercera vez.
+
+---
+Task ID: 23
+Agent: main (Z.ai)
+Task: Eslogan oficial de Zoe Master IA
+
+Work Log:
+- Eslogan agregado en 6 puntos: hero de bienvenida (bajo el logo, italica elegante), sidebar (bajo la marca), dialogo Acerca de, metadata SEO (description + openGraph), README y SYSTEM_PROMPT del Asistente (lo conoce como eslogan oficial).
+- tsc limpio. Verificado local con agent-browser (slogan visible en sidebar y hero) + captura download/eslogan-zoe-master-ia.png.
+- Commit 435dc66 -> push -> auto-deploy: deployment READY en Vercel.
+- Verificado en produccion: https://zoes.social muestra el eslogan en meta description y en el hero.
+
+Stage Summary:
+- Eslogan "Inteligencia artificial con proposito trascendente, al servicio de la vida y la sabiduria." publicado en toda la app y en https://zoes.social
