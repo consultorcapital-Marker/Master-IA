@@ -225,6 +225,10 @@ export function Sidebar({
           <X className="h-4 w-4" />
         </Button>
       </div>
+      <p className="px-4 pb-2 text-[0.68rem] italic leading-snug text-muted-foreground">
+        “Inteligencia artificial con propósito trascendente, al servicio de la vida y la
+        sabiduría.”
+      </p>
 
       {/* Menú principal */}
       <nav

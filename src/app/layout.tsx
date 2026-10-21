@@ -17,12 +17,13 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Zoe Master IA — Tu asistente inteligente",
   description:
-    "Chatea con una IA avanzada: responde preguntas, escribe textos, genera código y mucho más. Interfaz moderna estilo ChatGPT.",
+    "Inteligencia artificial con propósito trascendente, al servicio de la vida y la sabiduría. Chatea, genera imágenes y videos, investiga con fuentes reales y más.",
   keywords: ["IA", "asistente", "chat", "ChatGPT", "inteligencia artificial", "chatbot"],
   authors: [{ name: "Zoe Master IA" }],
   openGraph: {
     title: "Zoe Master IA — Tu asistente inteligente",
-    description: "Chatea con una IA avanzada en español: preguntas, escritura, código y más.",
+    description:
+      "Inteligencia artificial con propósito trascendente, al servicio de la vida y la sabiduría.",
     siteName: "Zoe Master IA",
     type: "website",
   },

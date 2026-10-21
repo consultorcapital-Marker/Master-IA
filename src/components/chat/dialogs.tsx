@@ -776,6 +776,11 @@ export function SettingsDialog({
               </Button>
             </div>
 
+            <p className="text-center text-xs italic text-muted-foreground">
+              “Inteligencia artificial con propósito trascendente, al servicio de la vida y la
+              sabiduría.”
+            </p>
+
             <p className="text-center text-[0.7rem] text-muted-foreground">
               Zoe Master IA v1.0 · Modelo GLM · Hecho con Next.js
             </p>

@@ -1231,11 +1231,15 @@ export default function HomePage() {
                   Videos con IA · Gratis
                 </Badge>
               )}
-              <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#003366] shadow-lg">
+              <div className="mb-2 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#003366] shadow-lg">
                 <span className="text-3xl font-bold text-white" aria-hidden="true">
                   M
                 </span>
               </div>
+              <p className="mb-4 max-w-lg text-center text-sm italic text-muted-foreground md:text-base">
+                “Inteligencia artificial con propósito trascendente, al servicio de la vida y la
+                sabiduría.”
+              </p>
               <h2 className="mb-2 text-center text-2xl font-semibold md:text-3xl">
                 {mode === "images"
                   ? "¿Qué imagen quieres crear?"

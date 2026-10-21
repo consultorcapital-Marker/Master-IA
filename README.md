@@ -1,5 +1,7 @@
 # Zoe Master IA
 
+> **“Inteligencia artificial con propósito trascendente, al servicio de la vida y la sabiduría.”**
+
 Plataforma de inteligencia artificial construida con **Next.js 16**, que integra chat conversacional con streaming, un agente autónomo con búsqueda web, generación de imágenes y videos, junto con un sistema de recompensas **GCRM / QFS**.
 
 Identidad visual: logotipo **"M"** en azul marino **#003366**, asistente principal **Agente Master**.
