@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
-import { ArrowUp, Loader2, Mic, Square } from "lucide-react";
+import { useEffect, useRef, useState, type ChangeEvent, type KeyboardEvent } from "react";
+import { ArrowUp, FileText, Loader2, Mic, Paperclip, Square, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
@@ -12,6 +12,13 @@ interface ChatInputProps {
   onStop: () => void;
   isStreaming: boolean;
   placeholder?: string;
+  /** Documento adjunto pendiente de enviar */
+  attachment: { name: string; size: number } | null;
+  onPickFile: (file: File | null) => void;
+  /** Mostrar el botón de adjuntar (modos chat/investigación/agente) */
+  showAttach: boolean;
+  /** Formato legible del tamaño para el chip */
+  formatSize?: (bytes: number) => string;
 }
 
 type VoiceState = "idle" | "recording" | "transcribing";
@@ -26,8 +33,13 @@ export function ChatInput({
   onStop,
   isStreaming,
   placeholder = "Escribe tu mensaje aquí…",
+  attachment,
+  onPickFile,
+  showAttach,
+  formatSize,
 }: ChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const [voiceState, setVoiceState] = useState<VoiceState>("idle");
@@ -183,12 +195,44 @@ export function ChatInput({
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault();
-      if (!isStreaming && value.trim()) onSend();
+      if (!isStreaming && (value.trim() || attachment)) onSend();
     }
   };
 
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    onPickFile(e.target.files?.[0] ?? null);
+    e.target.value = "";
+  };
+
+  const canSend = Boolean(value.trim() || attachment);
+
   return (
     <div className="rounded-3xl border bg-card shadow-sm p-2.5">
+      {attachment && (
+        <div
+          className="mb-2 flex items-center gap-2 rounded-2xl border bg-muted/50 px-3 py-2"
+          aria-label="Documento adjunto"
+        >
+          <FileText className="h-4 w-4 shrink-0 text-[#003366]" aria-hidden="true" />
+          <span className="min-w-0 flex-1 truncate text-[0.8rem] font-medium">
+            {attachment.name}
+          </span>
+          {formatSize && (
+            <span className="shrink-0 text-[0.7rem] text-muted-foreground">
+              {formatSize(attachment.size)}
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={() => onPickFile(null)}
+            className="cursor-pointer rounded-full p-1 text-muted-foreground transition-colors hover:bg-background hover:text-foreground"
+            aria-label="Quitar documento"
+            title="Quitar"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
       <div className="flex items-end gap-2">
         <textarea
           ref={textareaRef}
@@ -204,6 +248,19 @@ export function ChatInput({
           aria-label="Escribe tu mensaje"
           className="max-h-[200px] min-h-[24px] w-full resize-none bg-transparent px-2.5 py-1.5 text-[0.95rem] leading-relaxed outline-none placeholder:text-muted-foreground thin-scroll"
         />
+        {showAttach && (
+          <Button
+            type="button"
+            size="icon"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isStreaming}
+            title="Adjuntar documento para análisis"
+            className="h-9 w-9 shrink-0 rounded-full bg-muted text-foreground hover:bg-muted/70 disabled:opacity-60"
+            aria-label="Adjuntar documento"
+          >
+            <Paperclip className="h-4 w-4" />
+          </Button>
+        )}
         {voiceSupported && (
           <Button
             type="button"
@@ -248,7 +305,7 @@ export function ChatInput({
             type="button"
             size="icon"
             onClick={onSend}
-            disabled={!value.trim()}
+            disabled={!canSend}
             className="h-9 w-9 shrink-0 rounded-full bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40"
             aria-label="Enviar mensaje"
           >
@@ -256,6 +313,17 @@ export function ChatInput({
           </Button>
         )}
       </div>
+      {showAttach && (
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf,.docx,.txt,.md,.csv,.json,.xml,.html,.htm,.log,.yml,.yaml,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          className="hidden"
+          aria-hidden="true"
+          tabIndex={-1}
+          onChange={handleFileChange}
+        />
+      )}
     </div>
   );
 }

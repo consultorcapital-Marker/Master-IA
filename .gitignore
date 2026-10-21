@@ -54,3 +54,4 @@ Thumbs.db
 .z-ai-config
 .vercel
 .env*
+public/pdf.worker.min.mjs

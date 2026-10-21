@@ -47,6 +47,86 @@ import type {
   ConversationSummary,
   Plugins,
 } from "@/lib/types";
+import {
+  composeDocContent,
+  parseDocBlock,
+} from "@/lib/types";
+
+/* ====== Documentos adjuntos (análisis) ====== */
+const DOC_ACCEPT = /\.(pdf|docx|txt|md|csv|json|xml|html?|log|ya?ml|tsv)$/i;
+const MAX_DOC_BYTES = 10 * 1024 * 1024;
+
+function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result));
+    r.onerror = () => reject(new Error("No se pudo leer el archivo"));
+    r.readAsDataURL(file);
+  });
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes >= 1024 * 1024) return `${(bytes / 1048576).toFixed(1)} MB`;
+  return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+}
+
+/*
+ * Extrae el texto de un documento adjunto.
+ * - PDF: en el navegador con pdfjs-dist (el worker vive en /public).
+ * - Otros (DOCX, TXT, CSV…): endpoint /api/documents/extract (mammoth).
+ */
+let pdfjsLoaded: typeof import("pdfjs-dist") | null = null;
+
+async function loadPdfjs() {
+  if (!pdfjsLoaded) {
+    const pdfjs = await import("pdfjs-dist");
+    pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+    pdfjsLoaded = pdfjs;
+  }
+  return pdfjsLoaded;
+}
+
+async function extractPdfClient(file: File): Promise<string> {
+  const pdfjs = await loadPdfjs();
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const pdf = await pdfjs.getDocument({ data: bytes }).promise;
+  const maxPages = Math.min(pdf.numPages, 50);
+  const parts: string[] = [];
+  for (let i = 1; i <= maxPages; i++) {
+    const page = await pdf.getPage(i);
+    const tc = await page.getTextContent();
+    const pageText = tc.items
+      .map((it) => ("str" in it ? it.str : ""))
+      .join(" ")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (pageText) parts.push(pageText);
+  }
+  if (maxPages < pdf.numPages) {
+    parts.push(`[...documento truncado a ${maxPages} páginas...]`);
+  }
+  return parts.join("\n\n");
+}
+
+async function extractDocumentText(file: File): Promise<string> {
+  if (file.type === "application/pdf" || /\.pdf$/i.test(file.name)) {
+    return extractPdfClient(file);
+  }
+  const b64 = await fileToBase64(file);
+  const res = await fetch("/api/documents/extract", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name: file.name, dataBase64: b64 }),
+  });
+  const j = (await res.json().catch(() => ({}))) as {
+    text?: string;
+    error?: string;
+  };
+  if (!res.ok || !j?.text) {
+    throw new Error(j?.error ?? "No se pudo extraer el texto del documento.");
+  }
+  return j.text;
+}
 
 const SUGGESTIONS: Record<
   ChatMode,
@@ -275,6 +355,8 @@ export default function HomePage() {
   );
   const [videoLength, setVideoLength] = useState<"5" | "10" | "long">("5");
   const [photo, setPhoto] = useState<string | null>(null);
+  /* Documento adjunto pendiente de enviar para análisis */
+  const [attachment, setAttachment] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [plugins, setPlugins] = useState<Plugins>({
     thinking: false,
@@ -926,10 +1008,41 @@ export default function HomePage() {
     ]
   );
 
+  /* ====== Seleccionar y validar un documento para análisis ====== */
+  const handleAttachFile = useCallback(
+    (file: File | null) => {
+      if (!file) {
+        setAttachment(null);
+        return;
+      }
+      if (!DOC_ACCEPT.test(file.name) && !file.type.startsWith("text/")) {
+        toast({
+          title: "Formato no válido",
+          description: "Adjunta PDF, DOCX, TXT, MD, CSV, JSON o XML.",
+          variant: "destructive",
+        });
+        return;
+      }
+      if (file.size > MAX_DOC_BYTES) {
+        toast({
+          title: "Archivo demasiado grande",
+          description: "El límite para documentos es 10 MB.",
+          variant: "destructive",
+        });
+        return;
+      }
+      setAttachment(file);
+    },
+    [toast]
+  );
+
   /* ====== Enviar mensaje (streaming SSE) ====== */
   const send = useCallback(
-    async (rawText?: string) => {
-      const text = (rawText ?? input).trim();
+    async (
+      rawText?: string,
+      opts?: { existingUser?: boolean; skipUserMessage?: boolean }
+    ) => {
+      let text = (rawText ?? input).trim();
       if (isStreaming) return;
 
       /* El modo Videos usa su propio flujo (tarea asíncrona + polling) */
@@ -940,6 +1053,30 @@ export default function HomePage() {
           await sendVideo(text);
         }
         return;
+      }
+
+      /* Documento adjunto: extraer el texto y componer el mensaje */
+      if (attachment) {
+        const file = attachment;
+        const question =
+          text ||
+          "Analiza este documento y dame un resumen con sus puntos clave.";
+        try {
+          const docText = await extractDocumentText(file);
+          text = composeDocContent(question, file.name, docText);
+        } catch (e) {
+          toast({
+            title: "Documento",
+            description:
+              e instanceof Error
+                ? e.message
+                : "No se pudo procesar el documento.",
+            variant: "destructive",
+          });
+          return;
+        } finally {
+          setAttachment(null);
+        }
       }
       if (!text) return;
 
@@ -953,8 +1090,7 @@ export default function HomePage() {
       const currentMode = mode;
 
       setMessages((prev) => [
-        ...prev,
-        userMsg,
+        ...(opts?.existingUser ? prev : [...prev, userMsg]),
         { id: assistantId, role: "assistant", content: "" },
       ]);
       setInput("");
@@ -979,6 +1115,7 @@ export default function HomePage() {
             mode: currentMode,
             thinking: plugins.thinking,
             webSearch: plugins.webSearch,
+            skipUserMessage: opts?.skipUserMessage === true,
           }),
           signal: controller.signal,
         });
@@ -1062,12 +1199,67 @@ export default function HomePage() {
         abortRef.current = null;
       }
     },
-    [activeId, input, isStreaming, loadConversations, mode, photo, plugins, sendVideo, sendVideoLong, toast, videoLength]
+    [activeId, attachment, input, isStreaming, loadConversations, mode, photo, plugins, sendVideo, sendVideoLong, toast, videoLength]
   );
 
   const stopStreaming = useCallback(() => {
     abortRef.current?.abort();
   }, []);
+
+  /* ====== Editar un mensaje del usuario y regenerar (estilo ChatGPT) ====== */
+  const editUserMessage = useCallback(
+    async (msg: ChatMessage, newQuestion: string) => {
+      if (isStreaming) return;
+      if (mode === "videos") {
+        toast({
+          title: "No disponible",
+          description: "La edición no está disponible en el modo Videos.",
+        });
+        return;
+      }
+      const text = newQuestion.trim();
+      if (!text) return;
+
+      /* Conserva el documento adjunto original si lo había */
+      const parsed = parseDocBlock(msg.content);
+      const fullContent =
+        parsed.docName && parsed.docText
+          ? composeDocContent(text, parsed.docName, parsed.docText)
+          : text;
+
+      /* En la base: actualizar el mensaje y truncar lo posterior */
+      let skipUserMessage = false;
+      if (activeId) {
+        try {
+          const res = await fetch("/api/messages/edit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              conversationId: activeId,
+              originalContent: msg.content,
+              content: fullContent,
+            }),
+          });
+          const j = await res.json().catch(() => ({} as { found?: boolean }));
+          skipUserMessage = j?.found === true;
+        } catch {
+          /* sin conexión: el reenvío creará el mensaje normalmente */
+        }
+      }
+
+      /* Local: reemplaza el mensaje y corta todo lo posterior */
+      setMessages((prev) => {
+        const i = prev.findIndex((m) => m.id === msg.id);
+        if (i < 0) return prev;
+        const copy = [...prev];
+        copy[i] = { ...copy[i], content: fullContent };
+        return copy.slice(0, i + 1);
+      });
+
+      await send(fullContent, { existingUser: true, skipUserMessage });
+    },
+    [activeId, isStreaming, mode, send, toast]
+  );
 
   const toggleTheme = () => {
     setTheme(resolvedTheme === "dark" ? "light" : "dark");
@@ -1308,6 +1500,8 @@ export default function HomePage() {
                     m.id === messages[messages.length - 1]?.id &&
                     m.role === "assistant"
                   }
+                  canEdit={mode !== "videos"}
+                  onEditSubmit={editUserMessage}
                 />
               ))}
             </div>
@@ -1485,10 +1679,22 @@ export default function HomePage() {
               onSend={() => send()}
               onStop={stopStreaming}
               isStreaming={isStreaming}
+              attachment={
+                attachment
+                  ? { name: attachment.name, size: attachment.size }
+                  : null
+              }
+              onPickFile={handleAttachFile}
+              showAttach={
+                mode === "chat" || mode === "research" || mode === "agente"
+              }
+              formatSize={formatBytes}
               placeholder={
                 mode === "videos" && photo
                   ? "Describe cómo animar tu foto (opcional)…"
-                  : PLACEHOLDERS[mode]
+                  : attachment
+                    ? "Pregunta algo sobre el documento…"
+                    : PLACEHOLDERS[mode]
               }
             />
             <p className="mt-2 text-center text-[0.7rem] text-muted-foreground">

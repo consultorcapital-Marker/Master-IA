@@ -82,6 +82,8 @@ export async function POST(req: NextRequest) {
     const mode: string = VALID_MODES.includes(body?.mode) ? body.mode : "chat";
     const thinking: boolean = body?.thinking === true;
     const webSearch: boolean = body?.webSearch === true;
+    /* true al reenviar tras editar: el mensaje del usuario ya esta en la base */
+    const skipUserMessage: boolean = body?.skipUserMessage === true;
 
     if (!message) {
       return NextResponse.json(
@@ -113,10 +115,13 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Guardar mensaje del usuario
-    await db.message.create({
-      data: { role: "user", content: message, conversationId },
-    });
+    // Guardar mensaje del usuario (se omite al reenviar tras editar:
+    // el mensaje ya existe en la base y fue actualizado por /api/messages/edit)
+    if (!skipUserMessage) {
+      await db.message.create({
+        data: { role: "user", content: message, conversationId },
+      });
+    }
 
     // Título automático en el primer intercambio
     const count = await db.message.count({ where: { conversationId } });

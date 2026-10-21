@@ -1,4 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "node scripts/patch-zai-sdk.js && prisma generate && mkdir -p db && DATABASE_URL=file:db/custom.db prisma db push --skip-generate && next build"
+  "buildCommand": "node scripts/patch-zai-sdk.js && cp -f node_modules/pdfjs-dist/build/pdf.worker.min.mjs public/pdf.worker.min.mjs && prisma generate && mkdir -p db && DATABASE_URL=file:db/custom.db prisma db push --skip-generate && next build"
 }
