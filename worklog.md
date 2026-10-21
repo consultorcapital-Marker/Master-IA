@@ -484,3 +484,19 @@ Stage Summary:
 - Auto-deploy operativo: cada push a main genera deployment de produccion (verificado end-to-end).
 - URL: https://master-ia-two.vercel.app (HTTP 200).
 - Nota: si el usuario agrega el Login Connection de GitHub en Vercel, se puede migrar a la integracion nativa (previews de PR). Evitar ambas a la vez para no duplicar deploys.
+
+---
+Task ID: 21
+Agent: main (Z.ai)
+Task: Dominio personalizado zoes.social en Vercel
+
+Work Log:
+- Agregado zoes.social al proyecto master-ia (POST /v10/projects/.../domains) -> verified:true a nivel cuenta.
+- Agregado www.zoes.social con redirect 308 -> zoes.social -> verified:true.
+- Diagnostico DNS: dominio EXTERNO en Hostinger (NS nova/cosmos.dns-parking.com); el A actual (2.57.91.91) es parking -> HTTPS falla (HTTP 000) hasta actualizar DNS.
+- DNS de Hostinger no accesible sin credenciales del registrar: se entrega instrucciones exactas al usuario (A @ -> 76.76.21.21, CNAME www -> cname.vercel-dns.com).
+- SSL de Vercel se emite automatico al apuntar los registros.
+
+Stage Summary:
+- Dominio vinculado al proyecto en Vercel; pendiente solo del cambio de 2 registros DNS en Hostinger.
+- Cuando propague: https://zoes.social servira Master IA y www redirigira 308 al apex.
