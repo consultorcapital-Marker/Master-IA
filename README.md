@@ -1,4 +1,4 @@
-# Master IA
+# Zoe Master IA
 
 Plataforma de inteligencia artificial construida con **Next.js 16**, que integra chat conversacional con streaming, un agente autónomo con búsqueda web, generación de imágenes y videos, junto con un sistema de recompensas **GCRM / QFS**.
 

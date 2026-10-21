@@ -133,7 +133,7 @@ const SUGGESTIONS: Record<
     {
       icon: Bot,
       title: "Marca con imagen",
-      text: "Crea una imagen promocional de Master IA y explica cómo usarla en redes sociales",
+      text: "Crea una imagen promocional de Zoe Master IA y explica cómo usarla en redes sociales",
     },
     {
       icon: Bot,
@@ -1119,7 +1119,7 @@ export default function HomePage() {
   );
 
   const activeTitle =
-    conversations.find((c) => c.id === activeId)?.title ?? "Master IA";
+    conversations.find((c) => c.id === activeId)?.title ?? "Zoe Master IA";
   const modeBadge = MODE_BADGES[mode];
   const suggestions = SUGGESTIONS[mode];
 
@@ -1488,7 +1488,7 @@ export default function HomePage() {
               }
             />
             <p className="mt-2 text-center text-[0.7rem] text-muted-foreground">
-              Master IA puede cometer errores. Verifica la información
+              Zoe Master IA puede cometer errores. Verifica la información
               importante.
             </p>
           </div>

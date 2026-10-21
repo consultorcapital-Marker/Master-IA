@@ -123,7 +123,7 @@ async function buildStoryboard(
     format === "portrait"
       ? "TikTok (video vertical 9:16)"
       : "YouTube (video horizontal 16:9)";
-  const system = `Eres el director de un estudio de video con IA integrado en Master IA. Convierte la idea del usuario en un guion de ${scenes} escenas que, unidas en orden, forman UN solo video continuo de ~${scenes * clipDuration} segundos pensado para ${platform}.
+  const system = `Eres el director de un estudio de video con IA integrado en Zoe Master IA. Convierte la idea del usuario en un guion de ${scenes} escenas que, unidas en orden, forman UN solo video continuo de ~${scenes * clipDuration} segundos pensado para ${platform}.
 
 Reglas para cada escena:
 - Describe el clip en 1 o 2 frases muy visuales: sujeto, acción, movimiento de cámara, luz y estilo.

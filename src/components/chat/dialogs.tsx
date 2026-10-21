@@ -378,7 +378,7 @@ export function GcrDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Gem className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-            Master IA es 100% gratis
+            Zoe Master IA es 100% gratis
           </DialogTitle>
           <DialogDescription>
             Sin pago de licencia ni suscripciones: todas las funciones son
@@ -613,7 +613,7 @@ export function HelpDialog({ open, onOpenChange }: HelpDialogProps) {
             Ayuda
           </DialogTitle>
           <DialogDescription>
-            Preguntas frecuentes sobre Master IA.
+            Preguntas frecuentes sobre Zoe Master IA.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
@@ -702,7 +702,7 @@ export function SettingsDialog({
               Configuración
             </DialogTitle>
             <DialogDescription>
-              Personaliza Master IA a tu gusto.
+              Personaliza Zoe Master IA a tu gusto.
             </DialogDescription>
           </DialogHeader>
 
@@ -777,7 +777,7 @@ export function SettingsDialog({
             </div>
 
             <p className="text-center text-[0.7rem] text-muted-foreground">
-              Master IA v1.0 · Modelo GLM · Hecho con Next.js
+              Zoe Master IA v1.0 · Modelo GLM · Hecho con Next.js
             </p>
           </div>
         </DialogContent>

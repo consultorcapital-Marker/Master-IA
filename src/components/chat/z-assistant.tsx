@@ -55,7 +55,7 @@ const MODES: {
     id: "thinking",
     label: "Razonar",
     icon: Brain,
-    placeholder: "Analiza paso a paso una función de Master IA…",
+    placeholder: "Analiza paso a paso una función de Zoe Master IA…",
     loading: "Razonando paso a paso…",
   },
 ];
@@ -63,7 +63,7 @@ const MODES: {
 const SUGGESTIONS: { text: string; mode: AgentMode }[] = [
   { text: "¿Cómo funcionan las recompensas de 5 horas?", mode: "chat" },
   { text: "Busca las últimas noticias de GCRM y QFS", mode: "search" },
-  { text: "Crea una imagen promocional de Master IA", mode: "image" },
+  { text: "Crea una imagen promocional de Zoe Master IA", mode: "image" },
   {
     text: "Si llevo 3 horas de uso, ¿cuánto falta para mis recompensas?",
     mode: "thinking",
@@ -71,7 +71,7 @@ const SUGGESTIONS: { text: string; mode: AgentMode }[] = [
 ];
 
 const WELCOME =
-  "¡Hola! Soy el **Asistente Master AI**, tu agente inteligente en Master IA. Impulsa tu productividad: **información web al instante** con fuentes, **imágenes profesionales** y **análisis con razonamiento experto**. Selecciona un modo para comenzar.";
+  "¡Hola! Soy el **Asistente Master AI**, tu agente inteligente en Zoe Master IA. Impulsa tu productividad: **información web al instante** con fuentes, **imágenes profesionales** y **análisis con razonamiento experto**. Selecciona un modo para comenzar.";
 
 export function ZAssistant() {
   const [open, setOpen] = useState(false);
@@ -184,7 +184,7 @@ export function ZAssistant() {
                   className="h-1.5 w-1.5 rounded-full bg-emerald-400"
                   aria-hidden="true"
                 />
-                En línea · agente de Master IA
+                En línea · agente de Zoe Master IA
               </p>
             </div>
             <Button

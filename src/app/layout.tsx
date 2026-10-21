@@ -15,15 +15,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Master IA — Tu asistente inteligente",
+  title: "Zoe Master IA — Tu asistente inteligente",
   description:
     "Chatea con una IA avanzada: responde preguntas, escribe textos, genera código y mucho más. Interfaz moderna estilo ChatGPT.",
   keywords: ["IA", "asistente", "chat", "ChatGPT", "inteligencia artificial", "chatbot"],
-  authors: [{ name: "Master IA" }],
+  authors: [{ name: "Zoe Master IA" }],
   openGraph: {
-    title: "Master IA — Tu asistente inteligente",
+    title: "Zoe Master IA — Tu asistente inteligente",
     description: "Chatea con una IA avanzada en español: preguntas, escritura, código y más.",
-    siteName: "Master IA",
+    siteName: "Zoe Master IA",
     type: "website",
   },
 };

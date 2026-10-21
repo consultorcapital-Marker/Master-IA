@@ -213,7 +213,7 @@ export function Sidebar({
           >
             M
           </span>
-          <span className="font-semibold text-sm">Master IA</span>
+          <span className="font-semibold text-sm">Zoe Master IA</span>
         </div>
         <Button
           variant="ghost"
@@ -358,7 +358,7 @@ export function Sidebar({
       {/* Pie de la barra lateral */}
       <div className="border-t p-3">
         <p className="px-1 text-[0.7rem] text-muted-foreground">
-          Master IA puede cometer errores. Verifica la información importante.
+          Zoe Master IA puede cometer errores. Verifica la información importante.
         </p>
       </div>
 
