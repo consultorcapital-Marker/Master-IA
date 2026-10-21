@@ -33,8 +33,20 @@ export async function GET() {
   } catch (e) {
     info.createZai = info.createZai ?? "ok";
     info.chatOk = false;
-    info.chatError =
-      e instanceof Error ? `${e.name}: ${e.message.slice(0, 400)}` : String(e).slice(0, 400);
+    if (e instanceof Error) {
+      info.chatError = `${e.name}: ${e.message.slice(0, 200)}`;
+      const cause = (e as Error & { cause?: unknown }).cause;
+      if (cause) {
+        const c = cause as Record<string, unknown>;
+        info.chatCause = {
+          code: c.code ?? null,
+          message: String(c.message ?? "").slice(0, 200),
+          name: c.name ?? null,
+        };
+      }
+    } else {
+      info.chatError = String(e).slice(0, 300);
+    }
   }
 
   return NextResponse.json(info);
