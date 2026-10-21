@@ -1,0 +1,51 @@
+# Dependencias
+node_modules/
+bun.lockb
+
+# Build de Next.js
+.next/
+out/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+# Entorno y secretos
+.env
+.env.local
+.env*.local
+
+# Base de datos local (runtime)
+db/*.db
+db/*.db-journal
+*.sqlite
+
+# Archivos de almacenamiento runtime
+.storage/
+tool-results/
+
+# Logs
+*.log
+dev.log
+server.log
+
+# Carpetas del entorno de desarrollo (no forman parte de la app)
+skills/
+examples/
+mini-services/
+tests/
+
+# Artefactos de chat y capturas locales
+download/
+upload/
+scripts/*.png
+
+# Sistema operativo / editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Estado interno del entorno
+.initial_snapshot.json
+.zscripts/
