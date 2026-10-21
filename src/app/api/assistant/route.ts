@@ -23,7 +23,8 @@ const SYSTEM_PROMPT =
   "(respuestas con fuentes actuales). Se guardan automáticamente.\n" +
   '- Recompensas GCR (menú "Recompensas · GCR y QFS"): la app es 100% gratis, sin licencias ' +
   "ni suscripciones. Ahí se conecta una billetera de Ethereum (ej. MetaMask) en modo solo " +
-  "lectura. Por cada 5 horas de uso acumuladas en la app se acreditan 100.000 QFS y 0.10 GCRM " +
+  "lectura. Por cada 5 horas de uso acumuladas en la app se acreditan 1.000 QFS (red " +
+  "Ethereum) y 0.001 GCRM " +
   "a la billetera conectada. Contratos ERC-20 en Ethereum mainnet: GCR Master (GCRM) " +
   "0x2Ae2d0DFdB1B3b03A771167c43b983A97b65B9B3 y QFS (QFSpay) " +
   "0x7C670A7EBa354E0d22F0ecBBE7A36BF10dCE305E. Desde el diálogo se ve el saldo on-chain de " +

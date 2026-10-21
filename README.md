@@ -29,7 +29,7 @@ Identidad visual: logotipo **"M"** en azul marino **#003366**, asistente princip
 - **Videos largos para redes**: formatos verticales **9:16 (TikTok)** y horizontales **16:9 (YouTube)**.
 
 ### Recompensas GCRM / QFS
-- Recompensa automática de **100.000 QFS + 0,10 GCRM** cada 5 horas de uso.
+- Recompensa automática de **1.000 QFS (red Ethereum) + 0,001 GCRM** cada 5 horas de uso.
 - Seguimiento del saldo y del ciclo de recompensas.
 
 ---

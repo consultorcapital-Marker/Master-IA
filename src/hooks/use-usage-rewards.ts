@@ -7,10 +7,10 @@ import { useToast } from "@/hooks/use-toast";
 
 /** Duración del ciclo de uso: 5 horas en segundos */
 export const CYCLE_SECONDS = 5 * 60 * 60;
-/** QFS pagados por cada ciclo completado */
-export const QFS_PER_CYCLE = 100000;
+/** QFS (red Ethereum) pagados por cada ciclo completado */
+export const QFS_PER_CYCLE = 1000;
 /** GCRM pagados por cada ciclo completado */
-export const GCRM_PER_CYCLE = 0.1;
+export const GCRM_PER_CYCLE = 0.001;
 
 const REWARDS_KEY = "master-ia-gcr-rewards";
 const USAGE_KEY = "master-ia-usage";
@@ -25,7 +25,7 @@ export interface RewardState {
 export const ZERO_REWARDS: RewardState = { gcrm: 0, qfs: 0, cycles: 0 };
 
 const fmt = (n: number) =>
-  n.toLocaleString("es-PE", { maximumFractionDigits: 2 });
+  n.toLocaleString("es-PE", { maximumFractionDigits: 4 });
 
 const loadRewardStates = (): Record<string, RewardState> => {
   try {

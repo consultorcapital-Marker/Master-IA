@@ -125,7 +125,7 @@ export function PluginsDialog({
 const ETHEREUM_CHAIN_ID = "0x1";
 
 const fmtNum = (n: number) =>
-  n.toLocaleString("es-PE", { maximumFractionDigits: 2 });
+  n.toLocaleString("es-PE", { maximumFractionDigits: 4 });
 
 const formatHm = (totalSeconds: number) => {
   const h = Math.floor(totalSeconds / 3600);
