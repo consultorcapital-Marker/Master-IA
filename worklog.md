@@ -567,3 +567,25 @@ Work Log:
 Stage Summary:
 - Verificacion completa del buscador: por escrito operativo E2E (local) y con DB/persistencia operativa en produccion; dictado por voz con boton, grabacion, endpoint y transcripcion real verificados (WAV+WebM).
 - Produccion zoes.social: app 200, DB 200, asr 400 (validacion), UI con micrófono renderizada. Bloqueo IA documentado (API interna Z.ai) con plan claro para resolverlo (API publica + key).
+
+---
+Task ID: 26
+Agent: main (Z.ai)
+Task: Habilitar copiar/editar mensajes del usuario + subir documentos para analisis
+
+Work Log:
+- UI message.tsx: barra de acciones en burbujas del usuario (copiar con check + lapiz editar, visibles en hover, siempre accesibles en movil); modo edicion con textarea autoexpandible y Cancelar/Enviar (Enter envia, Escape cancela); la burbuja muestra solo la pregunta + chip del documento (parseDocBlock).
+- page.tsx editUserMessage: conserva el documento adjunto original al editar; POST /api/messages/edit (localiza el mensaje por contenido original, actualiza y trunca lo posterior); truncado local; reenvio con existingUser + skipUserMessage.
+- API /api/messages/edit: actualiza el mensaje y borra todos los posteriores (estilo ChatGPT). found=false si no esta en la base (el reenvio la crea).
+- API /api/chat: flag skipUserMessage para no duplicar el mensaje del usuario al regenerar.
+- Documentos: chat-input.tsx agrega boton clip + chip de archivo con tamano y quitar; page.tsx valida (10 MB max; pdf/docx/txt/md/csv/json/xml/html/log/yml) y compone el mensaje con marcador "─── Documento: nombre ───" que viaja en el historial del LLM sin cambiar el esquema.
+- Extraccion PDF: pdf-parse/its pdf.js interno se corrompe bajo bundlers (bad XRef entry; probado static import, serverExternalPackages, createRequire y eval require). Solucion final: extraccion en el NAVEGADOR con pdfjs-dist 6.4 (worker en /public, lazy import, max 50 paginas); el servidor solo procesa DOCX (mammoth) y texto.
+- vercel.json: buildCommand copia pdf.worker.min.mjs a public/ (gitignored) para que exista en el deployment.
+- E2E local verificado con PDF real (reportlab): chip visible, la IA respondio con datos EXACTOS del documento (suministro 1,000,000 GCRM, circulante 350,000); edicion reenvio y regenero la respuesta correcta (350,000 circulante, Ethereum) con truncado persistido en DB; copiar muestra check; DOCX y TXT por endpoint OK.
+- Produccion zoes.social (deploy 4c3a8fb READY): app 200, /pdf.worker.min.mjs 200, /api/documents/extract extrayendo TXT OK, /api/messages/edit validando OK.
+- Lint 0 errores; tsc 0 errores en src.
+
+Stage Summary:
+- Los mensajes del usuario ya tienen Copiar y Editar (regenera la respuesta y trunca la conversacion) estilo ChatGPT.
+- Adjuntar documentos para analisis: PDF en el navegador, DOCX/TXT/CSV/JSON/XML en servidor; el texto viaja en el historial del LLM y la burbuja muestra un chip limpio.
+- Nota: el analisis IA completo requiere backend SDK (sandbox); en produccion la extraccion funciona y la llamada IA devuelve el error amigable conocido (API interna de Z.ai).
