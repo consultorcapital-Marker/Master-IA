@@ -530,3 +530,20 @@ Work Log:
 
 Stage Summary:
 - Eslogan "Inteligencia artificial con proposito trascendente, al servicio de la vida y la sabiduria." publicado en toda la app y en https://zoes.social
+
+---
+Task ID: 24
+Agent: main (Z.ai)
+Task: Dictado por voz en el buscador (estilo ChatGPT)
+
+Work Log:
+- Skill ASR cargada: zai.audio.asr.create({file_base64}) -> response.text (solo backend).
+- Nuevo endpoint src/app/api/asr/route.ts: acepta data URL o base64, limite ~20MB, maxDuration 60.
+- chat-input.tsx reescrito: boton de microfono (izquierda del enviar) con estados idle/grabando (rojo pulsante)/transcribiendo (spinner); MediaRecorder con mimeType adaptado (webm/opus, mp4 Safari); texto transcrito se ANADE al input (estilo ChatGPT); auto-corte 120s; libera stream al parar; toasts para permisos/errores; se oculta si el navegador no soporta MediaRecorder.
+- Pruebas: endpoint local con tono WAV -> {"text":"#"} (plumbing OK); 400 sin audio; CLI z-ai asr OK (TTS estaba 429 por rate limit, se uso tono ffmpeg como audio de prueba).
+- E2E navegador: boton "Dictar por voz" renderiza; click en headless sin permisos muestra toast "Microfono bloqueado" (manejo de errores correcto). Captura download/dictado-voz-boton.png.
+- Commit 21fd954 -> auto-deploy success -> /api/asr responde 400 en produccion (zoes.social).
+
+Stage Summary:
+- Dictado por voz publicado en https://zoes.social para todos los modos (chat, imagenes, videos, agente, investigacion).
+- Pendiente de prueba real por el usuario con microfono fisico (Chrome/Edge recomendado).
