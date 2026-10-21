@@ -500,3 +500,19 @@ Work Log:
 Stage Summary:
 - Dominio vinculado al proyecto en Vercel; pendiente solo del cambio de 2 registros DNS en Hostinger.
 - Cuando propague: https://zoes.social servira Master IA y www redirigira 308 al apex.
+
+---
+Task ID: 22
+Agent: main (Z.ai)
+Task: Rebranding Master IA -> Zoe Master IA + dominio en produccion
+
+Work Log:
+- Grep: 0 apariciones previas de "Zoe" en el codigo; interpretado como cambio de marca a "Zoe Master IA".
+- Renombrado 26 referencias del producto en src/ + README (sed global; "Asistente Master AI" intacto por ser distinto).
+- Proyecto Vercel renombrado: master-ia -> zoe-master-ia (PATCH /v9/projects; workflow usa projectId, no afectado). .vercel/project.json local actualizado.
+- tsc limpio. Commit 8115ff7 -> push -> auto-deploy GitHub Actions: success, deployment READY.
+- DNS: zoes.social ahora resuelve 76.76.21.21 (usuario actualizo Hostinger). Verificado en produccion: https://zoes.social sirve <title>Zoe Master IA - Tu asistente inteligente</title>.
+
+Stage Summary:
+- Marca "Zoe Master IA" publicada y operativa en https://zoes.social (SSL activo).
+- Nuevo alias de proyecto: zoe-master-ia.vercel.app. Auto-deploy validado por tercera vez.
