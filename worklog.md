@@ -467,3 +467,20 @@ Stage Summary:
 - App publicada y publica en https://master-ia-two.vercel.app
 - Funciona: UI completa, chat streaming + SDK (config via bundle), conversaciones, imagenes inline, recompensas (localStorage).
 - Limitaciones Vercel: persistencia SQLite efimera por instancia (recomendado Turso/Neon para produccion real); videos largos limitados (ffmpeg/estado entre instancias no disponible).
+
+---
+Task ID: 20
+Agent: main (Z.ai)
+Task: Conectar repo GitHub a Vercel (auto-deploy)
+
+Work Log:
+- Intento de vercel git connect nativo: bloqueado ("You need to add a Login Connection to your GitHub account") - requiere OAuth en navegador del usuario.
+- Solucion implementada: GitHub Actions (.github/workflows/deploy.yml) - deploy --prod en cada push a main + workflow_dispatch, con concurrencia.
+- Secreto VERCEL_TOKEN creado cifrado en el repo via API (libsodium sealed box, scripts/create-github-secret.py).
+- Primer push rechazado por Push Protection de GitHub: el script tenia tokens en texto plano (buena deteccion). Refactorizado a variables de entorno; commit a424e47 aceptado.
+- Run #1 del workflow: completed|success. Deployment dpl_7SKyD9Tr READY con githubCommitSha=a424e47.
+
+Stage Summary:
+- Auto-deploy operativo: cada push a main genera deployment de produccion (verificado end-to-end).
+- URL: https://master-ia-two.vercel.app (HTTP 200).
+- Nota: si el usuario agrega el Login Connection de GitHub en Vercel, se puede migrar a la integracion nativa (previews de PR). Evitar ambas a la vez para no duplicar deploys.
