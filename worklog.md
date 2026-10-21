@@ -410,3 +410,21 @@ Work Log:
 
 Stage Summary:
 - Master IA anima fotos reales (imagen→video con resolución adaptada), genera clips de 5 y 10 s en formato YouTube 16:9 o TikTok 9:16, y crea videos largos (~30 s) uniendo 3 escenas con guion de IA y ffmpeg, todo gratis; el pipeline sobrevive recargas (estado en disco + marcadores en la conversación) y maneja el límite de peticiones con turnos y reintentos automáticos
+
+---
+Task ID: 17
+Agent: main (Z.ai)
+Task: Subir el proyecto Master IA a GitHub (usuario: consultorcapital-Marker)
+
+Work Log:
+- El entorno se reinicio: el proyecto se encontro en /tmp/my-project; se restauro completo a /home/z/my-project (incluye Task 16 video ya implementada: video-card.tsx, api/videos/*).
+- Se creo .gitignore profesional: excluye node_modules, .next, .env, db/*.db, .storage, skills/, examples/, tests/, download/, upload/, .zscripts, logs.
+- Se creo README.md completo (features, stack, setup, estructura).
+- Git init limpio en main, identidad GitHub noreply, commit 7ca0e1c con 97 archivos.
+- Escaneo de secretos antes de push: 0 coincidencias (sin tokens/keys en el repo; .env excluido).
+- Repo detectado ya creado por el usuario: consultorcapital-Marker/Master-IA (publico, vacio). Push -u origin main exitoso y verificado via API (commit y arbol raiz visibles).
+
+Stage Summary:
+- Proyecto Master IA publicado en https://github.com/consultorcapital-Marker/Master-IA (rama main, commit 7ca0e1c, 97 archivos).
+- Token remoto configurado en .git/config para futuros push directos (git push origin main).
+- Nota seguridad: recomendar rotar el PAT compartido en chat y usar fine-grained tokens.
