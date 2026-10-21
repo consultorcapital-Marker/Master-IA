@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import ZAI, { SearchFunctionResultItem } from "z-ai-web-dev-sdk";
-import { db } from "@/lib/db";
+import { db, ensureDb } from "@/lib/db";
 
 export const maxDuration = 300;
 
@@ -72,6 +72,7 @@ function sourcesFooter(sources: SearchFunctionResultItem[]): string {
 
 export async function POST(req: NextRequest) {
   try {
+    await ensureDb();
     const body = await req.json();
     const message: string =
       typeof body?.message === "string" ? body.message.trim() : "";

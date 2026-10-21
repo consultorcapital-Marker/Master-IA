@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import ZAI from "z-ai-web-dev-sdk";
-import { db } from "@/lib/db";
+import { db, ensureDb } from "@/lib/db";
 import fs from "fs";
 import path from "path";
 import { execFile } from "child_process";
@@ -251,6 +251,7 @@ function progress(p: Pipeline) {
 /* ====== POST: crear el guion y arrancar el pipeline ====== */
 export async function POST(req: NextRequest) {
   try {
+    await ensureDb();
     const body = await req.json();
     const idea: string =
       typeof body?.idea === "string" ? body.idea.trim().slice(0, 800) : "";
@@ -371,6 +372,7 @@ export async function POST(req: NextRequest) {
 /* ====== GET: avanzar y consultar el estado del pipeline ====== */
 export async function GET(req: NextRequest) {
   try {
+    await ensureDb();
     const id = req.nextUrl.searchParams.get("id");
     if (!id) {
       return NextResponse.json(

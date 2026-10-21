@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import ZAI from "z-ai-web-dev-sdk";
-import { db } from "@/lib/db";
+import { db, ensureDb } from "@/lib/db";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -55,6 +55,7 @@ async function upsertAssistantMessage(
 export async function POST(req: NextRequest) {
   let promptFallback = "";
   try {
+    await ensureDb();
     const body = await req.json();
     const prompt: string =
       typeof body?.prompt === "string" ? body.prompt.trim().slice(0, 800) : "";
@@ -179,6 +180,7 @@ export async function POST(req: NextRequest) {
 /* ====== GET: consultar el estado de la tarea ====== */
 export async function GET(req: NextRequest) {
   try {
+    await ensureDb();
     const params = req.nextUrl.searchParams;
     const taskId = params.get("taskId");
     const conversationId = params.get("conversationId");

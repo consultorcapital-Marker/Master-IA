@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db, ensureDb } from "@/lib/db";
 
 export async function GET() {
   try {
+    await ensureDb();
     const conversations = await db.conversation.findMany({
       orderBy: { updatedAt: "desc" },
       include: { messages: { orderBy: { createdAt: "asc" }, take: 1 } },
@@ -19,6 +20,7 @@ export async function GET() {
 
 export async function POST() {
   try {
+    await ensureDb();
     const conversation = await db.conversation.create({
       data: { title: "Nueva conversación" },
     });
@@ -34,6 +36,7 @@ export async function POST() {
 
 export async function DELETE() {
   try {
+    await ensureDb();
     // Los mensajes se eliminan en cascada con cada conversación
     await db.conversation.deleteMany({});
     return NextResponse.json({ ok: true });
