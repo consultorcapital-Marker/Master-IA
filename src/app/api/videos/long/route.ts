@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import ZAI from "z-ai-web-dev-sdk";
+import { createZai, type ZAIInstance } from "@/lib/zai";
 import { db, ensureDb } from "@/lib/db";
 import fs from "fs";
 import path from "path";
@@ -113,7 +113,7 @@ async function upsertAssistantMessage(
 
 /* ====== Guion: el LLM divide la idea en escenas ====== */
 async function buildStoryboard(
-  zai: Awaited<ReturnType<typeof ZAI.create>>,
+  zai: ZAIInstance,
   idea: string,
   scenes: number,
   format: "landscape" | "portrait",
@@ -163,7 +163,7 @@ Responde SOLO con JSON válido: {"scenes": ["escena 1", "escena 2"]} con exactam
 
 /* ====== Crear la tarea de una escena (con respaldo a 5 s) ====== */
 async function createSceneTask(
-  zai: Awaited<ReturnType<typeof ZAI.create>>,
+  zai: ZAIInstance,
   scenePrompt: string,
   format: "landscape" | "portrait",
   quality: "speed" | "quality",
@@ -274,7 +274,7 @@ export async function POST(req: NextRequest) {
     }
 
     ensureDirs();
-    const zai = await ZAI.create();
+    const zai = await createZai();
     const scenePrompts = await buildStoryboard(
       zai, idea, scenes, format, clipDuration
     );
@@ -392,7 +392,7 @@ export async function GET(req: NextRequest) {
     locks.add(id);
 
     try {
-      const zai = await ZAI.create();
+      const zai = await createZai();
 
       if (p.stage === "generating") {
         // 1) Crear la siguiente tarea pendiente respetando el intervalo mínimo

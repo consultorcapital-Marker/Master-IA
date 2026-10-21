@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createZai } from "@/lib/zai";
 import ZAI, { SearchFunctionResultItem } from "z-ai-web-dev-sdk";
 import { db, ensureDb } from "@/lib/db";
 
@@ -129,7 +130,7 @@ export async function POST(req: NextRequest) {
     }
 
     const conversationIdFinal = conversationId;
-    const zai = await ZAI.create();
+    const zai = await createZai();
 
     const encoder = new TextEncoder();
     const stream = new ReadableStream<Uint8Array>({

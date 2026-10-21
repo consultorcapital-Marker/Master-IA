@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createZai } from "@/lib/zai";
 import ZAI, { SearchFunctionResultItem } from "z-ai-web-dev-sdk";
 
 export const maxDuration = 120;
@@ -96,7 +97,7 @@ export async function POST(req: NextRequest) {
     mode = resolved;
     const history = sanitizeHistory(body?.history);
 
-    const zai = await ZAI.create();
+    const zai = await createZai();
 
     /* ========== MODO IMAGEN ========== */
     if (mode === "image") {

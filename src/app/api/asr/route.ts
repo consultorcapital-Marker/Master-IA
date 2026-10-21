@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import ZAI from "z-ai-web-dev-sdk";
+import { createZai } from "@/lib/zai";
 
 export const maxDuration = 60;
 
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const zai = await ZAI.create();
+    const zai = await createZai();
     const response = await zai.audio.asr.create({ file_base64: base64 });
     const text = (response?.text ?? "").trim();
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import ZAI from "z-ai-web-dev-sdk";
+import { createZai } from "@/lib/zai";
 import { db, ensureDb } from "@/lib/db";
 
 export const runtime = "nodejs";
@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
 
     // La tarea se crea ANTES de persistir: si el servicio falla (p. ej. límite
     // de peticiones), no quedan mensajes huérfanos en la base de datos
-    const zai = await ZAI.create();
+    const zai = await createZai();
     const finalPrompt = prompt || promptFallback;
     // Con foto adjunta la API deriva la resolución de la imagen (probado);
     // en texto->video se usa el formato elegido (YouTube 16:9 o TikTok 9:16)
@@ -194,7 +194,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const zai = await ZAI.create();
+    const zai = await createZai();
     const result = await zai.async.result.query(taskId);
 
     if (result.task_status === "SUCCESS") {
