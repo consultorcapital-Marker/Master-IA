@@ -15,7 +15,9 @@ export async function GET(
   if (!/^[a-zA-Z0-9_-]+\.mp4$/.test(file)) {
     return NextResponse.json({ error: "Archivo no válido" }, { status: 400 });
   }
-  const filePath = path.join(process.cwd(), ".storage", "videos", file);
+  const storageRoot =
+    process.env.MASTER_STORAGE_DIR || path.join(process.cwd(), ".storage");
+  const filePath = path.join(storageRoot, "videos", file);
   if (!fs.existsSync(filePath)) {
     return NextResponse.json({ error: "Video no encontrado" }, { status: 404 });
   }

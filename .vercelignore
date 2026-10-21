@@ -1,0 +1,18 @@
+# Artefactos locales y del entorno que no viajan al deployment
+.storage
+download
+upload
+skills
+examples
+tests
+tool-results
+mini-services
+.zscripts
+.initial_snapshot.json
+.env
+dev.log
+server.log
+*.log
+scripts/*.png
+worklog.md
+Caddyfile

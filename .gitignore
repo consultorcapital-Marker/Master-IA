@@ -49,3 +49,8 @@ Thumbs.db
 # Estado interno del entorno
 .initial_snapshot.json
 .zscripts/
+
+# Credenciales del SDK (nunca en el repo)
+.z-ai-config
+.vercel
+.env*

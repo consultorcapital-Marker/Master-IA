@@ -22,7 +22,8 @@ const execFileAsync = promisify(execFile);
  * El estado vive en .storage/pipelines/{id}.json: sobrevive a recargas y reinicios.
  */
 
-const STORAGE = path.join(process.cwd(), ".storage");
+const STORAGE =
+  process.env.MASTER_STORAGE_DIR || path.join(process.cwd(), ".storage");
 const PIPELINES_DIR = path.join(STORAGE, "pipelines");
 const VIDEOS_DIR = path.join(STORAGE, "videos");
 const MIN_CREATE_GAP_MS = 125_000; // separación entre creaciones de tareas (límite de peticiones)
