@@ -428,3 +428,20 @@ Stage Summary:
 - Proyecto Master IA publicado en https://github.com/consultorcapital-Marker/Master-IA (rama main, commit 7ca0e1c, 97 archivos).
 - Token remoto configurado en .git/config para futuros push directos (git push origin main).
 - Nota seguridad: recomendar rotar el PAT compartido en chat y usar fine-grained tokens.
+
+---
+Task ID: 18
+Agent: main (Z.ai)
+Task: Cambio de valores de recompensas (1.000 QFS red ETH + 0,001 GCRM cada 5 h)
+
+Work Log:
+- use-usage-rewards.ts: QFS_PER_CYCLE 100000->1000, GCRM_PER_CYCLE 0.1->0.001, fmt con 4 decimales.
+- dialogs.tsx: fmtNum con 4 decimales para mostrar 0,001 GCRM (antes se mostraria "0").
+- api/assistant/route.ts: SYSTEM_PROMPT actualizado ("1.000 QFS (red Ethereum) y 0.001 GCRM").
+- README.md actualizado. bun install reejecutado (entorno reiniciado), tsc + lint limpios.
+- E2E: dev server 200, dialogo Recompensas muestra "por cada 5 horas de uso recibes 1,000 QFS y 0.001 GCRM".
+- Commit 4884822 y push a GitHub (main).
+
+Stage Summary:
+- Recompensas ajustadas y publicadas en https://github.com/consultorcapital-Marker/Master-IA
+- Fuente unica de verdad: constantes QFS_PER_CYCLE/GCRM_PER_CYCLE usadas por hook, dialogo y toast.
